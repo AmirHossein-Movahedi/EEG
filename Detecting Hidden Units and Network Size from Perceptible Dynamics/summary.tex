@@ -1,0 +1,149 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb,mathtools}
+\usepackage{geometry}
+\usepackage{microtype}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\geometry{top=20mm,bottom=19mm,left=21mm,right=21mm}
+\definecolor{navy}{HTML}{17324D}
+\definecolor{accent}{HTML}{126F78}
+\definecolor{muted}{HTML}{526579}
+\hypersetup{colorlinks=true,urlcolor=accent,linkcolor=accent}
+\titleformat{\section}{\color{navy}\normalfont\bfseries\large}{}{0pt}{}
+\titleformat{\subsection}{\color{navy}\normalfont\bfseries\normalsize}{}{0pt}{}
+\titlespacing*{\section}{0pt}{9pt}{3pt}
+\titlespacing*{\subsection}{0pt}{6pt}{2pt}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{4pt}
+\setlist[enumerate]{leftmargin=*,topsep=2pt,itemsep=2pt,parsep=0pt}
+\setlist[itemize]{leftmargin=*,topsep=2pt,itemsep=1.5pt,parsep=0pt}
+\allowdisplaybreaks[1]
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\footnotesize\color{muted}Research note | Network-size detection}
+\fancyhead[R]{\footnotesize\color{muted}Haehne et al. (2019)}
+\fancyfoot[C]{\footnotesize\thepage\ / 2}
+\renewcommand{\headrulewidth}{0.35pt}
+\setlength{\headheight}{13pt}
+\begin{document}
+\begin{center}
+{\Large\bfseries\color{navy} Detecting Hidden Units and Network Size From Perceptible Dynamics}\\[2pt]
+{\small H. Haehne, J. Casadiego, J. Peinke, and M. Timme,\quad
+\emph{Physical Review Letters} \textbf{122}, 158301 (2019)}\\[-1pt]
+{\small \href{https://doi.org/10.1103/PhysRevLett.122.158301}{doi:10.1103/PhysRevLett.122.158301}}
+\end{center}
+\vspace{-3pt}
+\noindent\colorbox{navy!6}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{\textbf{Main question.}
+A network has $N$ interacting dynamical units, but only $n<N$ are measured. Can we infer the total size $N$---and hence the $h:=N-n$ hidden units---without knowing the governing equations or network connections?\\[2pt]
+\textbf{Main idea.} Arrange observations from \emph{several distinct transient trajectories} into a detection matrix $T$. Under sufficient excitation and observability, its rank equals the full system size: $\boxed{\operatorname{rank}(T)=N}$.
+\\
+\textbf{Sufficient Excitation}: it means if we don not have enough different experiments or experiments have the same response then we can not detect the hidden units.
+\\
+\textbf{Observability}: it means if the hidden units do not influence the measured units then we can not detect the hidden units.
+}}
+
+\section{1. Notation and dynamical model}
+\begin{center}
+\small
+\begin{tabular}{@{}ll@{} }
+\toprule
+$N$ / $n$ & Total number of units / number of directly measured units ($n<N$) \\
+$M$ / $k$ & Number of distinct trajectories (experiments) / sampling times per trajectory \\
+$\mathbf z(t)\in\mathbb R^N$ & Full network state (including unmeasured variables) \\
+$\mathbf y^{(m)}(t)\in\mathbb R^n$ & Measurements from experiment $m=1,\ldots,M$ \\
+$T\in\mathbb R^{kn\times M}$ & Detection matrix assembled from measured trajectories \\
+\bottomrule
+\end{tabular}
+\end{center}
+The unknown network evolves according to
+\begin{equation}
+  \dot{\mathbf z}(t)=\mathbf F(\mathbf z(t)). \tag{1}
+\end{equation}
+Near a fixed point $\mathbf z^*$, where $\mathbf F(\mathbf z^*)=0$, let
+$\mathbf x=\mathbf z-\mathbf z^*$. A first-order approximation gives
+\begin{equation}
+  \dot{\mathbf x}=A\mathbf x,\quad
+  A= D\mathbf F(\mathbf z^*),\quad
+  \mathbf x(t)=e^{At}\mathbf x(0). \tag{2}
+\end{equation}
+Here $A$ is the (unknown) Jacobian, which describes local influences between units.
+Only $n$ states are observed. With the selection matrix
+$C=[\,I_n\;0\,]\in\mathbb R^{n\times N}$,
+\begin{equation}
+  \mathbf y^{(m)}(t)=C e^{At}\mathbf x^{(m)}(0)
+  =\Theta(t)\mathbf x^{(m)}(0),\qquad \Theta(t)=Ce^{At}. \tag{3}
+\end{equation}
+The key point is that an observed response can depend on \emph{all} $N$ initial-state components, including those that are hidden.
+
+\section{2. Construct the detection matrix and derive the rank bound}
+At each common time $t_j$ measured relative to the start of the experiment, arrange the $M$ responses as columns:
+\[
+ Y(t_j)=[\mathbf y^{(1)}(t_j)\;\cdots\;\mathbf y^{(M)}(t_j)]
+ \in\mathbb R^{n\times M}.
+\]
+Stack the measurements at $k$ times, preserving the same experiment in each column:
+\begin{equation}
+\boxed{T=\begin{bmatrix}Y(t_1)\\\vdots\\Y(t_k)\end{bmatrix}}
+=\underbrace{\begin{bmatrix}\Theta(t_1)\\\vdots\\\Theta(t_k)\end{bmatrix}}_{\mathcal O_k\in\mathbb R^{kn\times N}}
+\underbrace{[\mathbf x^{(1)}(0)\;\cdots\;\mathbf x^{(M)}(0)]}_{X_0\in\mathbb R^{N\times M}}.
+\tag{4}
+\end{equation}
+By the rank inequality for a matrix product,
+\begin{equation}
+\operatorname{rank}(T)\le\min\{\operatorname{rank}(\mathcal O_k),
+\operatorname{rank}(X_0)\}\le\min\{kn,N,M\}\le N.\tag{5}
+\end{equation}
+If $\mathcal O_k$ has \emph{full column rank} $N$ (the chosen measurements reveal all state directions) and $X_0$ has \emph{full row rank} $N$ (the initial conditions span them), then
+\begin{equation}
+\boxed{\operatorname{rank}(T)=N,\qquad \widehat h=N-n=\operatorname{rank}(T)-n.}\tag{6}
+\end{equation}
+For generic informative data, the paper uses $kn>N$ and $M>N$; these size inequalities alone do \emph{not} guarantee full rank.
+
+\newpage
+\section{3. Practical algorithm: estimate rank using singular values}
+In measured data, noise makes exact numerical rank unreliable. The paper therefore computes the ordered singular values of $T$,
+\[
+ T=U\Sigma V^\top,\qquad
+ \sigma_1\ge\sigma_2\ge\cdots\ge\sigma_b\ge0,\quad b=\min(kn,M),
+\]
+and looks for an unusually large gap between successive values on a logarithmic scale:
+\begin{equation}
+\boxed{\Delta_j=\log\sigma_j-\log\sigma_{j+1}
+=\log\left(\frac{\sigma_j}{\sigma_{j+1}}\right),\quad j=1,\ldots,b-1.}\tag{7}
+\end{equation}
+The estimated network size is the \emph{index} of the relevant gap, not its numerical height. The full iterative procedure is:
+\begin{enumerate}[label=\textbf{\arabic*.}]
+\item \textbf{Collect trials:} Start with $M=n+1$ distinct transient trajectories, measured from the same $n$ accessible units.
+\item \textbf{Sample each trial:} Choose $k=\lceil M/n\rceil$ equally separated relative sampling times on each trajectory; construct $T$ as in (4).
+\item \textbf{Estimate a gap index:} Compute the singular values and $\Delta_j$; among $j\ge n$, omit the potentially misleading indices $\{n,2n,\ldots\}$ and $\{n+1,2n+1,\ldots\}$. Identify the index of the largest remaining gap.
+\item \textbf{Check robustness:} Repeat the sampling and gap calculation after retaining only $n-1,n-2,n-3,n-4$ measured units (when these counts are positive). Take the \emph{median of the estimated indices} as $\widehat N^{(M)}$.
+\item \textbf{Increase experiments:} Add another trajectory ($M\leftarrow M+1$) and repeat until $\widehat N^{(M)}$ stops increasing. Report $\widehat N=\widehat N^{(M)}$ and $\widehat h=\widehat N-n$.
+\end{enumerate}
+\vspace{-2pt}
+\textbf{Intuition:} Increasing $M$ and $k$ can reveal new independent directions. Once all $N$ directions are represented, the rank estimate saturates; a spectral gap appears after $\sigma_N$. A noisy or temporarily flat estimate, however, is not by itself proof of saturation.
+
+\section{4. Assumptions and scope}
+\begin{itemize}
+\item \textbf{Enough independent trials:} In the paper's generic full-rank argument, $M>N$ and $kn>N$. Distinct trials must excite enough independent initial-state directions; repeated identical trials are not sufficient.
+\item \textbf{Observability through measured units:} Hidden states must leave distinguishable signatures in the observed responses. A dynamically invisible unit cannot be counted by this procedure.
+\item \textbf{Comparable transient measurements:} Sampling times are aligned relative to each trial's start, and the underlying dynamics are consistent across trials.
+\item \textbf{Valid local linearization:} Near fixed points, (2) is a suitable approximation. For nonlinear periodic or chaotic motion, the method instead uses differences of \emph{nearby trajectories}, $\delta\mathbf z(t)\simeq D\Phi_{t-t^*}|_{\mathbf z^*}\,\delta\mathbf z(t^*)$, so that a comparable linear relation holds locally. Trajectories must remain sufficiently close for this approximation.
+\item \textbf{Noise and conditioning:} Measurement noise, weak coupling, and poorly separated singular values can cause over- or underestimation. The exact-rank theorem does not guarantee a correct rank estimate on every finite, noisy dataset.
+\end{itemize}
+
+\section{5. What did the authors find?}
+The paper demonstrates recovery of total network size in numerical experiments with (i) linear diffusively coupled systems near fixed points, (ii) nonlinear phase-locked Kuramoto oscillators, (iii) periodic and (iv) chaotic R\"ossler networks, and (v) nonlinear heterogeneous Michaelis--Menten biochemical networks with noise. In favorable examples, size detection worked when only about \emph{10\% of units were measured}. For tested linear networks, the minimum number of trials was consistent with $M_{\min}=N+1$; in the shown Kuramoto experiments it was $N+2$ because one trial served as a reference. More trials can allow accurate detection in noisy settings.
+
+\noindent\colorbox{navy!6}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{\textbf{Final result and limitation.} The method can infer the \emph{number} of hidden units from sufficiently informative transient observations without first identifying the full governing equations or connectivity. It does \emph{not} reconstruct hidden states, reveal where the hidden units are, or identify their exact connections.}}
+
+\vspace{3pt}
+\color{muted}\textbf{Many Parts of this summary are generated by ChatGPT.}
+\\
+{\footnotesize\color{muted}\textbf{Source:} Haehne \emph{et al.}, \emph{Phys. Rev. Lett.} \textbf{122}, 158301 (2019), especially Eqs.~(1)--(13), Figs.~1--4 and the concluding discussion.}
+\end{document}
